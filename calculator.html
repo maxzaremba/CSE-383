@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+	  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" >
+    
+    <link rel="stylesheet" href="css/final.css">
+    <title>Calculator</title>
+ </head>
+ <body>
+	 <div class="container">
+		<div class="menu" tabindex="1">
+			<div class="list">
+				<span><a href="index.html">Introduction</a></span>
+				<span><a href="calculator.html">Calculator</a></span>
+				<span><a href="weather.html">Weather</a></span>
+				<span><a href="sensor-update.html">Sensor Update</a></span>
+				<span>Sensor Report</span>
+         </div>
+     
+			<div class="intro">
+				<div class="btna"></div>
+				<form id="calculator">
+               <input type="hidden" name="api_key" value="bed859b37ac6f1dd59387829a18db84c22ac99c09ee0f5fb99cb708364858818">
+               <div class="form-group">
+                  <label for="n1">Number 1</label>
+                  <input type="number" class="form-control" name="n1" id="n1" placeholder="1">
+                </div>
+                <div class="form-group">
+                  <label for="n2">Number 2</label>
+                  <input type="number" class="form-control"name="n2"   id="n2" placeholder="2">
+                </div>
+
+               <div class="form-group">
+                 <label for="operation">Operation</label>
+                 <select class="form-control" id="operation" name="operation">
+                   <option value="Add">Add</option>
+                   <option value="Subtract">Subtract</option>
+                   <option value="Multiply">Multiply</option>
+                   <option value="Divide">Divide</option>
+                 </select>
+               </div>
+               <div class="form-group" id="result"></div>
+               <div class="btn btn-primary" onclick="execute()" id="execute">Execute</div>
+               <div class="btn btn-info" id="wait" style="display: none;">Please wait....</div>
+             </form>
+			</div>
+      </div>
+	</div>
+
+	
+ 
+   <script src="js/jquery.js" ></script>
+   <script  src="js/bootstrap.min.js" ></script>
+
+
+    <script>
+
+      function execute()
+      {
+         if($("#n1").val() == '')
+         {
+            alert("Number 1 is required");
+            return;
+         }
+         if($("#n2").val() == '')
+         {
+            alert("Number 2 is required");
+            return;
+         }
+         $("#execute").hide();
+         $("#wait").show();
+         var apihost ="https://api.clearllc.com/api/v2/math/"+$("#operation").val();
+         var form_data = $("#calculator").serializeArray();
+         $.get(apihost,form_data,function(data)
+         {
+            $("#result").html("<span class='alert alert-success'>Result is: "+data.result+"</span>");
+            $("#execute").show();
+            $("#wait").hide();
+         }
+         ).fail(function(){
+            $("#result").html("<span class='alert alert-danger'>Something went wrong!</span>");
+         });
+      }
+
+    </script>
+
+ </body>

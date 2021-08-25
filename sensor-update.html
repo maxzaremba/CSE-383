@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+	  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" >
+    
+    <link rel="stylesheet" href="css/final.css">
+    <title>Sensor Data Update</title>
+ </head>
+ <body>
+	 <div class="container">
+		<div class="menu" tabindex="1">
+			<div class="btna"></div>
+			<div class="list">
+				<span><a href="index.html">Introduction</a></span>
+				<span><a href="calculator.html">Calculator</a></span>
+				<span><a href="weather.html">Weather</a></span>
+				<span><a href="sensor-update.html">Sensor Update</a></span>
+				<span>Sensor Report</span>
+         </div>
+      
+			<div class="intro">
+				<form id="calculator">
+			   <input type="hidden" name="api_key" value="bed859b37ac6f1dd59387829a18db84c22ac99c09ee0f5fb99cb708364858818">
+			   <input type="hidden" name="userid" value="johnsok9">
+			   
+               <div class="form-group">
+                  <label for="location">Location</label>
+                  <input type="text" class="form-control" name="location" id="location" placeholder="Location">
+				</div>
+				
+                <div class="form-group">
+					<label for="sensor">Sensor</label>
+					<input type="number" class="form-control"name="sensor"   id="sensor" placeholder="sensor">
+				  </div>
+
+				  <div class="form-group">
+					<label for="value">Value</label>
+					<input type="text" class="form-control"name="value"   id="value" placeholder="value">
+				  </div>
+	
+               <div class="form-group" id="result"></div>
+               <div class="btn btn-primary" onclick="add()" id="add">Add</div>
+               <div class="btn btn-info" id="wait" style="display: none;">Please wait....</div>
+             </form>
+			</div>
+		</div>
+	</div>
+
+	
+ 
+   <script src="js/jquery.js" ></script>
+   <script  src="js/bootstrap.min.js" ></script>
+
+
+    <script>
+
+      function add()
+      {
+		if($("#location").val() == '')
+         {
+            alert("Location is required");
+            return;
+         }
+		var decimal=  /^[-+]?[0-9]+\.[0-9]+$/; 
+		if($("#sensor").val() > 9 || $("#sensor").val() < 1) 
+		{
+			alert("Sensor value must be between 1-9");
+			return;
+		}
+		
+		if(!$("#value").val().match(decimal)) 
+		{
+			alert("Value must be float number");
+			return;
+		}
+    
+         $("#add").hide();
+         $("#wait").show();
+         var apihost ="https://api.clearllc.com/api/v2/setTemp";
+         var form_data = $("#calculator").serializeArray();
+         $.get(apihost,form_data,function(data)
+         {
+			 if(data.status == '0')
+			 {
+				$("#result").html("<span class='alert alert-success'>"+data.message+"</span>");
+			 }
+			 else
+			 {
+				$("#result").html("<span class='alert alert-danger'>"+data.message+"</span>");
+			 }
+            
+            $("#add").show();
+            $("#wait").hide();
+         }
+         ).fail(function(){
+            $("#result").html("<span class='alert alert-danger'>Something went wrong!</span>");
+         });
+      }
+
+    </script>
+
+ </body>

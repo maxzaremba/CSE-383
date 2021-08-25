@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+	  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" >
+    
+    <link rel="stylesheet" href="css/final.css">
+    <title>Weather</title>
+ </head>
+ <body>
+	 <div class="container">
+		<div class="menu" tabindex="1">
+			<div class="list">
+				<span><a href="index.html">Introduction</a></span>
+				<span><a href="calculator.html">Calculator</a></span>
+				<span><a href="weather.html">Weather</a></span>
+				<span><a href="sensor-update.html">Sensor Update</a></span>
+				<span>Sensor Report</span>
+			</div>
+		
+			<div class="intro" >
+				<div class="btna"></div>
+				<div class="row justify-content-center" >
+					<div class="row" >
+						<div class=" col-sm-12 col-lg-12" >
+							<form id="weather">
+							<input type="hidden" name="api_key" value="bed859b37ac6f1dd59387829a18db84c22ac99c09ee0f5fb99cb708364858818">
+							<div class="form-group">
+								<label for="ids">Zip Code</label>
+								<input type="number" class="form-control " name="ids" id="ids" placeholder="Zip Code e.g 33101">
+								</div>
+							<div class="form-group" id="result"></div>
+							<div class="btn btn-primary" onclick="execute()" id="execute">Get</div>
+							<div class="btn btn-info" id="wait" style="display: none;">Please wait....</div>
+							
+							</form>
+						</div>	
+					</div>
+					<div class="row mt-3 col-sm-12 col-lg-12 justify-content-center" id="forecast"></div>
+				
+				</div>
+			</div>
+		</div>
+	
+ 
+   <script src="js/jquery.js" ></script>
+   <script  src="js/bootstrap.min.js" ></script>
+
+
+    <script>
+
+      function execute()
+      {
+         if($("#ids").val() == '')
+         {
+            alert("Zip Code is required");
+            return;
+         }
+         $("#execute").hide();
+         $("#wait").show();
+         var apihost ="https://api.clearllc.com/api/v2/miamidb/_table/zipcode";
+         var apihost2 ="https://api.openweathermap.org/data/2.5/onecall";
+         var form_data = $("#weather").serializeArray();
+         $.get(apihost,form_data,function(data)
+         {
+			var resource = data.resource[0];
+			
+           var lat = resource.latitude;
+           var lon = resource.longitude;
+           var exclude = 'hourly';
+		   var appid = '2049d502ca0466224fc76699967c898d';
+		   $.get(apihost2,{lat:lat,lon:lon,exclude:exclude,appid:appid},function(data2)
+         {
+			 $(".intro").addClass("noflex");
+			 var daily = data2.daily;
+			 $("#forecast").html('');
+			 $.each(daily, function( index, value ) {
+				 var weather = value.weather[0];
+
+				 var dt=eval(value.dt*1000);
+				var myDate = new Date(dt);
+			
+
+				 var daily_html = '<div class="card">'+
+				'<div class="card-body">'+
+					'<h5 class="card-title">Day '+index+'</h5>'+
+					'<h6 class="card-subtitle mb-2 text-muted">'+weather.main+'</h6>'+
+					'<p class="card-text">'+weather.description+'</p>'+
+					'<p class="card-text"><img src=http://openweathermap.org/img/w/'+weather.icon+'.png></p>'+
+					'<small>'+myDate.toLocaleString()+'</small>'+
+					'</div>'+
+					'</div>';
+					$("#forecast").append(daily_html);
+				});
+			
+            $("#execute").show();
+            $("#wait").hide();
+         }
+         ).fail(function(){
+            $("#result").html("<span class='alert alert-danger'>Something went wrong!</span>");
+         });
+
+         }
+         ).fail(function(){
+            $("#result").html("<span class='alert alert-danger'>Something went wrong!</span>");$("#execute").show(); $("#wait").hide();
+         });
+      }
+
+    </script>
+
+ </body>
